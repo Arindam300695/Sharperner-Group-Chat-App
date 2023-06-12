@@ -2,10 +2,11 @@ const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 
 const signupController = async (req, res) => {
-    const { name, email, phone, passwords } = req.body;
+    const { name, email, phone, password } = req.body;
+
     try {
         // chicking if user already exists in our database or not
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ where: { email } });
         if (user) {
             return res.json({ error: "User already exists" });
         }
@@ -13,10 +14,15 @@ const signupController = async (req, res) => {
             name,
             email,
             phone,
-            password: await bcrypt.hash(passwords, 10),
+            password: await bcrypt.hash(password, 10),
         });
         await newUser.save();
-        res.json({ message: "User created successfully" });
+        const createdUser = {
+            name: newUser.name,
+            email: newUser.email,
+            phone: newUser.phone,
+        };
+        res.json({ message: "User created successfully", createdUser });
     } catch (error) {
         return res.json({ error: error.message });
     }

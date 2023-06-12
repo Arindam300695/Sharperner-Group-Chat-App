@@ -1,7 +1,13 @@
 import { useState } from "react";
 import background from "../assets/background.jpg";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const baseUrl = "http://localhost:8080";
 
 const Signup = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -13,10 +19,19 @@ const Signup = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Do something with the form data, such as submit it to an API
         console.log(formData);
+
+        // Do something with the form data, such as submit it to an API
+        const { data } = await axios.post(`${baseUrl}/auth/signup`, formData);
+        if (data.error) return toast.error(data.error);
+        else {
+            setTimeout(() => {
+                navigate("/login");
+            }, 1500);
+            toast.success(data.message);
+        }
     };
 
     return (
@@ -113,6 +128,7 @@ const Signup = () => {
                     </button>
                 </div>
             </form>
+            <ToastContainer />
         </div>
     );
 };
