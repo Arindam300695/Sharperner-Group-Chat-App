@@ -2,7 +2,7 @@ import { useState } from "react";
 import background from "../assets/background.jpg";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const baseUrl = "http://localhost:8080";
 
@@ -40,94 +40,108 @@ const Signup = () => {
                 src={background}
                 className="mt-40 bg-inherit h-[400px] object-cover"
             />
-            <form
-                onSubmit={handleSubmit}
-                className="px-8 pt-6 pb-8 mb-4 bg-gradient-to-br lg:w-[600px] from-purple-950 to-pink-700 shadow-[#1B1464] mt-40 rounded shadow-md"
-            >
-                {/* name field */}
-                <div className="mb-4">
-                    <label
-                        htmlFor="name"
-                        className="block mb-2 text-sm font-bold text-white"
-                    >
-                        Name
-                    </label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                        placeholder="Enter your name"
-                        required
-                    />
-                </div>
+            <div className="px-8 pt-6 pb-8 mb-4 bg-gradient-to-br lg:w-[600px] from-purple-950 to-pink-700 shadow-[#1B1464]rounded shadow-md mt-16">
+                <h2 className="mb-8 text-2xl font-bold text-center text-white">
+                    Signup
+                </h2>
+                <form onSubmit={handleSubmit}>
+                    {/* name field */}
+                    <div className="mb-4">
+                        <label
+                            htmlFor="name"
+                            className="block mb-2 text-sm font-bold text-white"
+                        >
+                            Name
+                        </label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                            placeholder="Enter your name"
+                            required
+                        />
+                    </div>
 
-                {/* email field */}
-                <div className="mb-4">
-                    <label
-                        htmlFor="email"
-                        className="block mb-2 text-sm font-bold text-white"
-                    >
-                        Email
-                    </label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                        placeholder="Enter your email"
-                        required
-                    />
-                </div>
+                    {/* email field */}
+                    <div className="mb-4">
+                        <label
+                            htmlFor="email"
+                            className="block mb-2 text-sm font-bold text-white"
+                        >
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                            placeholder="Enter your email"
+                            required
+                        />
+                    </div>
 
-                {/* contact field */}
-                <div className="mb-4">
-                    <label
-                        htmlFor="phone"
-                        className="block mb-2 text-sm font-bold text-white"
-                    >
-                        Phone Number
-                    </label>
-                    <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                        placeholder="Enter your phone number"
-                        required
-                    />
-                </div>
+                    {/* contact field */}
+                    <div className="mb-4">
+                        <label
+                            htmlFor="phone"
+                            className="block mb-2 text-sm font-bold text-white"
+                        >
+                            Phone Number
+                        </label>
+                        <input
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                            placeholder="Enter your phone number"
+                            required
+                        />
+                    </div>
 
-                {/* password field */}
-                <div className="mb-4">
-                    <label
-                        htmlFor="password"
-                        className="block mb-2 text-sm font-bold text-white"
-                    >
-                        Password
-                    </label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                        placeholder="Enter your password"
-                        required
-                    />
-                </div>
-                <div className="flex items-center justify-center">
-                    <button
-                        type="submit"
-                        className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
-                    >
-                        Submit
-                    </button>
-                </div>
-            </form>
+                    {/* password field */}
+                    <div className="mb-4">
+                        <label
+                            htmlFor="password"
+                            className="block mb-2 text-sm font-bold text-white"
+                        >
+                            Password
+                        </label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                            placeholder="Enter your password"
+                            required
+                        />
+                    </div>
+                    <div className="flex items-center justify-center">
+                        <button
+                            type="submit"
+                            className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+                        >
+                            Submit
+                        </button>
+                    </div>
+
+                    {/* login link */}
+                    <div className="mt-20 font-semibold text-center align-bottom text-[#dff9fb] ">
+                        Already have an account?
+                        <NavLink
+                            to="/login"
+                            className="p-3 m-2 transition-all duration-300 rounded-md cursor-pointer bg-slate-600 hover:bg-slate-900"
+                        >
+                            Login
+                        </NavLink>
+                        here
+                    </div>
+                </form>
+            </div>
             <ToastContainer />
         </div>
     );

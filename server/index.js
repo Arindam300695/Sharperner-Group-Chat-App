@@ -9,12 +9,12 @@ require("dotenv").config();
 
 const startApp = async () => {
     try {
-        await sequelize.sync({}); // Synchronize models with the database
+        await sequelize.sync(); // Synchronize models with the database
         console.log("Database synchronized successfully");
 
         // Rest of your application code
     } catch (error) {
-        console.error("Unable to synchronize the database:", error);
+        console.error("Unable to synchronize the database:", error.messgae);
     }
 };
 
