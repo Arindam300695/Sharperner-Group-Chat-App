@@ -1,6 +1,6 @@
 import { useState } from "react";
 import background from "../assets/background.jpg";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
 
@@ -21,16 +21,21 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
-
         // Do something with the form data, such as submit it to an API
-        const { data } = await axios.post(`${baseUrl}/auth/signup`, formData);
-        if (data.error) return toast.error(data.error);
-        else {
-            setTimeout(() => {
-                navigate("/login");
-            }, 1500);
-            toast.success(data.message);
+        try {
+            const { data } = await axios.post(
+                `${baseUrl}/auth/signup`,
+                formData
+            );
+            if (data.error) return toast.error(data.error);
+            else {
+                setTimeout(() => {
+                    navigate("/login");
+                }, 1500);
+                toast.success(data.message);
+            }
+        } catch (error) {
+            return toast.error(error.message);
         }
     };
 
@@ -142,7 +147,6 @@ const Signup = () => {
                     </div>
                 </form>
             </div>
-            <ToastContainer />
         </div>
     );
 };

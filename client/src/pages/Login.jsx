@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import loginBackground from "../assets/loginBackground.webp";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const baseUrl = "http://localhost:8080";
 
@@ -22,22 +22,30 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Perform login logic here
-        const { data } = await axios.post(`${baseUrl}/auth/login`, {
-            email,
-            password,
-        });
-        if (data.error) return toast.error(data.error);
-        else {
-            toast.success(data.message);
-            localStorage.setItem("user", JSON.stringify(data.user));
-            setTimeout(() => {
-                navigate("/chat");
-            }, 1500);
+        try {
+            // Perform login logic here
+            const { data } = await axios.post(
+                `${baseUrl}/auth/login`,
+                {
+                    email,
+                    password,
+                },
+                { withCredentials: true }
+            );
+            if (data.error) return toast.error(data.error);
+            else {
+                // if everything is fine then need to set the token to local storage
+                toast.success(data.message);
+                setTimeout(() => {
+                    navigate("/chat");
+                }, 1500);
+            }
+            // Reset form fields
+            setEmail("");
+            setPassword("");
+        } catch (error) {
+            return toast.error(error.message);
         }
-        // Reset form fields
-        setEmail("");
-        setPassword("");
     };
 
     return (
@@ -107,7 +115,6 @@ const Login = () => {
                     here
                 </div>
             </div>
-            <ToastContainer />
         </div>
     );
 };
