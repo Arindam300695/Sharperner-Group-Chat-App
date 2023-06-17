@@ -6,10 +6,12 @@ const sequelize = require("./database/dbConnection");
 const chatRouter = require("./routes/chatRouter");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
+const User = require("./models/userModel");
+const Chat = require("./models/chatModel");
 
 const startApp = async () => {
     try {
-        await sequelize.sync(); // Synchronize models with the database
+        await sequelize.sync({}); // Synchronize models with the database
         console.log("Database synchronized successfully");
 
         // Rest of your application code
@@ -32,6 +34,9 @@ app.use(cookieParser());
 app.use("/auth", authRouter);
 // chat routes
 app.use("/chat", chatRouter);
+
+// defining relations between User and Chat models
+Chat.belongsTo(User);
 
 // listening to the port
 app.listen(process.env.PORT || 8080, (err) => {

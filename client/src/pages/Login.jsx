@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import loginBackground from "../assets/loginBackground.webp";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -48,14 +48,19 @@ const Login = () => {
         }
     };
 
+    // handleNavigate function
+    const handleNavigate = ()=>{
+        navigate("/")
+    };
+
     return (
-        <div className=" h-screen grid grid-cols-1 md:grid-cols-2 gap-10 mx-auto bg-[#FEFEFE]">
+        <div className="conatiner-md grid grid-cols-1 md:grid-cols-2 gap-10 mx-auto bg-[#FEFEFE]">
             <img
                 src={loginBackground}
                 alt="login backgroun image"
                 className=" bg-inherit h-[450px] object-cover mt-20 mx-auto"
             />
-            <div className="mx-auto lg:w-[600px] h-[550px] mt-16 px-6 py-8 bg-white rounded shadow-md bg-gradient-to-br from-purple-950 to-pink-700 shadow-[#1B1464]">
+            <div className="mx-auto mt-16 px-6 py-8 bg-white rounded shadow-md bg-gradient-to-br from-purple-950 to-pink-700 shadow-[#1B1464]">
                 <h2 className="mb-8 text-2xl font-bold text-center text-white">
                     Login
                 </h2>
@@ -104,14 +109,11 @@ const Login = () => {
                     </div>
                 </form>
                 {/*signup link */}
-                <div className="mt-20 font-semibold text-center align-bottom text-[#dff9fb] ">
+                <div className="mt-24 font-semibold text-center align-bottom text-[#dff9fb] ">
                     Dont have an account?
-                    <NavLink
-                        to="/"
-                        className="p-3 m-2 transition-all duration-300 rounded-md cursor-pointer bg-slate-600 hover:bg-slate-900"
-                    >
+                    <button className="p-3 m-2 transition-all duration-300 rounded-md cursor-pointer bg-slate-600 hover:bg-slate-900" onClick={handleNavigate}>
                         Signup
-                    </NavLink>
+                    </button>
                     here
                 </div>
             </div>

@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 // signup controller
 const signupController = async (req, res) => {
-    const { name, email, phone, password } = req.body;
+    const { name, email, phone, password, profilePicture } = req.body;
 
     try {
         // chicking if user already exists in our database or not
@@ -17,12 +17,14 @@ const signupController = async (req, res) => {
             email,
             phone,
             password: await bcrypt.hash(password, 10),
+            profilePicture,
         });
         await newUser.save();
         const createdUser = {
             name: newUser.name,
             email: newUser.email,
             phone: newUser.phone,
+            profile: newUser.profilePicture,
         };
         return res.json({ message: "User created successfully", createdUser });
     } catch (error) {
@@ -52,6 +54,7 @@ const loginController = async (req, res) => {
                 name: isRegistered.name,
                 email: isRegistered.email,
                 phone: isRegistered.phone,
+                profile: isRegistered.profilePicture,
             },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
@@ -67,4 +70,9 @@ const loginController = async (req, res) => {
     }
 };
 
-module.exports = { signupController, loginController };
+const logoutController = (req, res) => {
+    res.clearCookie("jwt_token");
+    res.json({ message: "Logged out successfully" });
+};
+
+module.exports = { signupController, loginController, logoutController };
