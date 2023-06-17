@@ -17,7 +17,7 @@ const Chatbox = () => {
     const [clickedToLogout, setClickedToLogout] = useState(false);
     const [message, setMessage] = useState("");
     const [messagesData, setMessagesData] = useState([]);
-    console.log(messagesData);
+
     useEffect(() => {
         // using axios.get and await async and try catch to getting the suer data
         const fetchUserData = async () => {
@@ -52,13 +52,16 @@ const Chatbox = () => {
                     navigate("/error");
                     return toast.error(data.error);
                 } else {
+                    console.log(data);
                     setMessagesData(data);
                 }
             } catch (error) {
                 return toast.error(error.message);
             }
         };
-        fetchMessagesData();
+        setInterval(() => {
+            fetchMessagesData();
+        }, 1500);
     }, [navigate]);
 
     // clickedToLogout handler function
