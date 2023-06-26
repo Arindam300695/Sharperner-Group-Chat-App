@@ -3,11 +3,13 @@ const cors = require("cors");
 const helmet = require("helmet");
 const authRouter = require("./routes/authRouter");
 const sequelize = require("./database/dbConnection");
-const chatRouter = require("./routes/chatRouter");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const User = require("./models/userModel");
-const Chat = require("./models/chatModel");
+const Group = require("./models/groupModel");
+const Message = require("./models/messageModel");
+const groupRouter = require("./routes/groupRouter");
+const messageRouter = require("./routes/messageRouter");
 
 const startApp = async () => {
     try {
@@ -16,7 +18,7 @@ const startApp = async () => {
 
         // Rest of your application code
     } catch (error) {
-        console.error("Unable to synchronize the database:", error.messgae);
+        console.error("Unable to synchronize the database:", error.message);
     }
 };
 
@@ -32,11 +34,17 @@ app.use(cookieParser());
 // routes
 // authentication route
 app.use("/auth", authRouter);
-// chat routes
-app.use("/chat", chatRouter);
+// message routes
+app.use("/message", messageRouter);
+// group routes
+app.use("/group", groupRouter);
 
-// defining relations between User and Chat models
-Chat.belongsTo(User);
+// defining relations between User and Message models
+Message.belongsTo(User);
+// defining relations between Message and Group models
+Message.belongsTo(Group);
+// defining relations between User and Group models
+Group.belongsTo(User);
 
 // listening to the port
 app.listen(process.env.PORT || 8080, (err) => {

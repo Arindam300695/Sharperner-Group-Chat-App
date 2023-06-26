@@ -1,8 +1,8 @@
 const User = require("../models/userModel");
-const Chat = require("../models/chatModel");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { Op } = require("sequelize");
+const Message = require("../models/messageModel");
 
 // get users except than the one who is currently logged in
 const getUsersController = async (req, res) => {
@@ -31,7 +31,8 @@ const getUsersController = async (req, res) => {
             where: { id: { [Op.ne]: decoded.id } },
         });
         // if the user is empty
-        if (!user.length) return res.json({ error: "No user found" });
+        if (user.length === 0)
+            return res.json({ message: "No user found", decoded });
         //  if the user is not empty
         return res.json({ user, decoded });
     } catch (error) {
@@ -41,27 +42,26 @@ const getUsersController = async (req, res) => {
 
 // create messages and save them to the database
 const createMessageController = async (req, res) => {
-    const { message } = req.body;
     // checking if the token is valid or not which we will recieve from request cookies
     const { jwt_token } = req.cookies;
+    const { message, groupId, userId } = req.body;
+    console.log(message, groupId, userId);
+
+    // checking if the user is sending the token while trying to access this route or not
+    if (!jwt_token) {
+        return res.json({ error: "Access Denied" });
+    }
     try {
-        // checking if the user is sending the token while trying to access this route or not
-        if (!jwt_token) {
-            return res.json({ error: "Access Denied" });
-        }
-        // but if the user is sending the token while trying to access this route
         // verifying the token using jwt library
         const decoded = jwt.verify(jwt_token, process.env.JWT_SECRET);
         if (!decoded) return res.json({ error: "Invalid token" });
-        // if (decoded) then creating a new messaqge and save it to the database
-        const createMessage = await Chat.create({
+        // if (decoded) need to create a new message and need to save it to the database
+        const newMessage = await Message.create({
             message,
-            ChatUserId: decoded.id,
+            ChatGroupId: groupId,
+            ChatUserId: userId,
         });
-        return res.json({
-            message: "message added to the database successfully",
-            createMessage,
-        });
+        return res.json(newMessage);
     } catch (error) {
         return res.json({ error: error.message });
     }
@@ -69,22 +69,32 @@ const createMessageController = async (req, res) => {
 
 // getting messages from the database
 const getMessageController = async (req, res) => {
+    const { groupId } = req.params;
+    console.log(groupId);
     // checking if the token is valid or not which we will recieve from request cookies
     const { jwt_token } = req.cookies;
+
+    // checking if the user is sending the token while trying to access this route or not
+    if (!jwt_token) {
+        return res.json({ error: "Access Denied" });
+    }
+    // but if the user is sending the token while trying to access this route
     try {
-        // checking if the user is sending the token while trying to access this route or not
-        if (!jwt_token) {
-            return res.json({ error: "Access Denied" });
-        }
-        // but if the user is sending the token while trying to access this route
         // verifying the token using jwt library
         const decoded = jwt.verify(jwt_token, process.env.JWT_SECRET);
         if (!decoded) return res.json({ error: "Invalid token" });
-        // if (decoded) then creating a new messaqge and save it to the database
-        const messages = await Chat.findAll({
-            attributes: ["message", "ChatUserId", "createdAt"],
+        // if (decoded) then need to find all the messages related that group in which user will click that are there in the database
+        const messages = await Message.findAll({
+            where: { ChatGroupId: groupId },
         });
-        return res.json(messages);
+        const users = [];
+        for (let i = 0; i < messages.length; i++) {
+            const user = await User.findOne({
+                where: { id: messages[i].ChatUserId },
+            });
+            users.push(user);
+        }
+        return res.json({ messages, users });
     } catch (error) {
         return res.json({ error: error.message });
     }

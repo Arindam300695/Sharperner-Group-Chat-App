@@ -64,7 +64,7 @@ const loginController = async (req, res) => {
             httpOnly: true,
             maxAge: 1000 * 60 * 60,
             secure: false,
-        }).json({ message: "Login successful" });
+        }).json({ message: "Login successful", id: isRegistered.id });
     } catch (error) {
         return res.json({ error: error.message });
     }

@@ -7,6 +7,7 @@ import Chatbox from "./pages/Chatbox";
 import { ToastContainer } from "react-toastify";
 import ThankYouPage from "./pages/ThankyouPage";
 import Error404Page from "./pages/Error404Page";
+import Messages from "./pages/Messages";
 
 const App = () => {
     return (
@@ -18,6 +19,7 @@ const App = () => {
                     <Route path="/chat" element={<Chatbox />} />
                     <Route path="/logout" element={<ThankYouPage />} />
                     <Route path="/error" element={<Error404Page />} />
+                    <Route path="/messages/:groupId" element={<Messages />} />
                     <Route path="*" element={<Error404Page />} />
                 </Routes>
             </BrowserRouter>

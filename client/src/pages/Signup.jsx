@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import background from "../assets/background.jpg";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -8,6 +8,14 @@ const baseUrl = "http://localhost:8080";
 
 const Signup = () => {
     const navigate = useNavigate();
+
+    // checking if the user is logged in or not and if the user is logged in then restricting his/her access to visit this route
+    useEffect(() => {
+        const localStorageUser = localStorage.getItem("id");
+        if (localStorageUser !== null) navigate("/chat");
+        return () => {};
+    }, [navigate]);
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",

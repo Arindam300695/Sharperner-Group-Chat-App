@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import loginBackground from "../assets/loginBackground.webp";
 import axios from "axios";
@@ -8,6 +8,13 @@ const baseUrl = "http://localhost:8080";
 
 const Login = () => {
     const navigate = useNavigate();
+
+    // checking if the user is logged in or not and if the user is logged in then restricting his/her access to visit this route
+    useEffect(() => {
+        const localStorageUser = localStorage.getItem("id");
+        if (localStorageUser !== null) navigate("/chat");
+        return () => {};
+    }, [navigate]);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -34,8 +41,9 @@ const Login = () => {
             );
             if (data.error) return toast.error(data.error);
             else {
-                // if everything is fine then need to set the token to local storage
+                // if everything is fine
                 toast.success(data.message);
+                localStorage.setItem("id", JSON.stringify(data.id));
                 setTimeout(() => {
                     navigate("/chat");
                 }, 1500);
@@ -49,8 +57,8 @@ const Login = () => {
     };
 
     // handleNavigate function
-    const handleNavigate = ()=>{
-        navigate("/")
+    const handleNavigate = () => {
+        navigate("/");
     };
 
     return (
@@ -111,7 +119,10 @@ const Login = () => {
                 {/*signup link */}
                 <div className="mt-24 font-semibold text-center align-bottom text-[#dff9fb] ">
                     Dont have an account?
-                    <button className="p-3 m-2 transition-all duration-300 rounded-md cursor-pointer bg-slate-600 hover:bg-slate-900" onClick={handleNavigate}>
+                    <button
+                        className="p-3 m-2 transition-all duration-300 rounded-md cursor-pointer bg-slate-600 hover:bg-slate-900"
+                        onClick={handleNavigate}
+                    >
                         Signup
                     </button>
                     here
