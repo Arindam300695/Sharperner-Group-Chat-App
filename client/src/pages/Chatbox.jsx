@@ -21,9 +21,11 @@ const Chatbox = () => {
     const [groupsData, setGroupsData] = useState(null);
     const [currentTime, setCurrentTime] = useState(null);
     const [isAddMembersModalOpen, setIsAddMembersModalOpen] = useState(false);
+    const [isRemoveMemeberModel, setIsRemoveMemeberModel] = useState(false);
     const [userIdListToBeAddedToGroup, setUserIdListToBeAddedToGroup] =
         useState([]);
     const [groupId, setGroupId] = useState("");
+    const [membersTobeRemoved, setMemebersTobeRemoved] = useState([]);
 
     // console.log(
     //     currentTime,
@@ -51,6 +53,16 @@ const Chatbox = () => {
         setIsAddMembersModalOpen(false);
     };
     // add member modal opening and closing section ends here
+
+    // remove member modal opening section and closing section starts here
+    const openRemoveMemberModal = () => {
+        setIsRemoveMemeberModel(true);
+    };
+
+    const closeRemoveMemberModal = () => {
+        setIsRemoveMemeberModel(false);
+    };
+    // remove member modal opening and closing section ends here
 
     useEffect(() => {
         // setting current time based on current time and switching the theme accordingly between dark and light
@@ -312,7 +324,7 @@ const Chatbox = () => {
                             <div className="">
                                 {groupsData?.map((eachGroup, index) => (
                                     <div key={index} className="m-10">
-                                        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+                                        <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
                                             <h1
                                                 className="bg-[#FF55BB] sm:w-full p-3 rounded-lg text-center m-2 w-auto font-bold text-xl uppercase shadow-md shadow-[#FFD3A3] border border-[#00DFA2] active:scale-[0.75] translate-all duration-300 cursor-pointer"
                                                 onClick={() => {
@@ -324,31 +336,59 @@ const Chatbox = () => {
                                                 {eachGroup?.groupName}
                                             </h1>
                                             {eachGroup?.admin === user?.id && (
-                                                <button
-                                                    className="border border-[#FF55BB] p-3 rounded-md shadow-md shadow-[#00DFA2] active:scale-[0.75] transition-all duration-300"
-                                                    onClick={async () => {
-                                                        openAddMemberModal();
-                                                        setGroupId(
-                                                            eachGroup?.id
-                                                        );
-                                                        const { data } =
-                                                            await axios.post(
-                                                                `${baseUrl}/group/getCompleteGroupDetails/${eachGroup?.id}`,
-                                                                { userData },
-                                                                {
-                                                                    withCredentials: true,
-                                                                }
+                                                <>
+                                                    <button
+                                                        className="border border-[#FF55BB] p-3 rounded-md shadow-md shadow-[#00DFA2] active:scale-[0.75] transition-all duration-300"
+                                                        onClick={async () => {
+                                                            openAddMemberModal();
+                                                            setGroupId(
+                                                                eachGroup?.id
                                                             );
-                                                        if (data.error)
-                                                            return toast.error(
-                                                                data.error
+                                                            const { data } =
+                                                                await axios.post(
+                                                                    `${baseUrl}/group/getCompleteGroupDetails/${eachGroup?.id}`,
+                                                                    {
+                                                                        userData,
+                                                                    },
+                                                                    {
+                                                                        withCredentials: true,
+                                                                    }
+                                                                );
+                                                            if (data.error)
+                                                                return toast.error(
+                                                                    data.error
+                                                                );
+                                                            setUserList(data);
+                                                        }}
+                                                    >
+                                                        Add Members
+                                                    </button>
+                                                    <button
+                                                        className="border border-[#FF55BB] p-3 rounded-md shadow-md shadow-[#00DFA2] active:scale-[0.75] transition-all duration-300"
+                                                        onClick={async () => {
+                                                            openRemoveMemberModal();
+                                                            setGroupId(
+                                                                eachGroup?.id
                                                             );
-
-                                                        setUserList(data);
-                                                    }}
-                                                >
-                                                    Add Members
-                                                </button>
+                                                            const { data } =
+                                                                await axios.get(
+                                                                    `${baseUrl}/group/removeMember/${eachGroup?.id}`,
+                                                                    {
+                                                                        withCredentials: true,
+                                                                    }
+                                                                );
+                                                            setMemebersTobeRemoved(
+                                                                data.filter(
+                                                                    (item) =>
+                                                                        item.name !==
+                                                                        user.name
+                                                                )
+                                                            );
+                                                        }}
+                                                    >
+                                                        Remove Members
+                                                    </button>
+                                                </>
                                             )}
                                         </div>
                                     </div>
@@ -399,6 +439,56 @@ const Chatbox = () => {
                 </div>
             )}
             {/* add group moodal ends here */}
+
+            {/* remove group memebrs modal starts here */}
+            {isRemoveMemeberModel && (
+                <div className="fixed inset-0 z-10 flex items-center justify-center">
+                    <div className="p-4 bg-[#40128B] rounded shadow-lg text-center">
+                        <div className="flex items-center justify-between gap-10 mb-4">
+                            <h1 className="font-semibold text-gray-200">
+                                Choose members you wanna remove from your group
+                            </h1>
+                            <button
+                                onClick={closeRemoveMemberModal}
+                                className="text-gray-600 transition-all duration-300 hover:text-white hover:scale-y-150  active:scale-[0.75]"
+                            >
+                                <AiOutlineClose className="w-6 h-6" />
+                            </button>
+                        </div>
+                        {membersTobeRemoved?.map((item, index) => (
+                            <div
+                                key={index}
+                                className="flex items-center justify-center gap-5"
+                            >
+                                <h2 className="font-bold text-white">
+                                    {item?.name}
+                                </h2>
+                                <button
+                                    className="font-semibold text-white border border-[#FF0060] p-3 m-2 rounded-md shadow-md shadow-[#F6FA70] active:scale-[0.75] transition-all duration-300"
+                                    onClick={async () => {
+                                        const { data } = await axios.delete(
+                                            `${baseUrl}/group/removeMemberfromGroup/${groupId}/${item?.id}`,
+                                            { withCredentials: true }
+                                        );
+                                        if (data.error)
+                                            return toast.error(data.error);
+                                        setMemebersTobeRemoved(
+                                            membersTobeRemoved.filter(
+                                                (i) => i.id !== item?.id
+                                            )
+                                        );
+                                        if (data.message)
+                                            return toast.success(data.message);
+                                    }}
+                                >
+                                    Remove me
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+            {/* remove grouop members modal ends here */}
 
             {/* add group memebrs modal starts here */}
             {isAddMembersModalOpen && (

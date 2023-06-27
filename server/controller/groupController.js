@@ -128,9 +128,69 @@ const getCompleteGroupDetailsController = async (req, res) => {
     }
 };
 
+// finding memebers from group to remove them from that group
+const findMemebrsforRemovingController = async (req, res, next) => {
+    const { groupId } = req.params;
+    // receiving the jwt token from the admin and checking if the token is valid or not which we will recieve from request cookies
+    const { jwt_token } = req.cookies;
+    try {
+        // checking if the user is sending the token while trying to access this route or not
+        if (!jwt_token) {
+            return res.json({ error: "Access Denied" });
+        }
+        // but if the user is sending the token while trying to access this route
+        // verifying the token using jwt library
+        const decoded = jwt.verify(jwt_token, process.env.JWT_SECRET);
+        if (!decoded) return res.json({ error: "Invalid token" });
+        // but if decoded then need to find out who all are there in that particular group
+        const userPresentinthisGroup = [];
+        const userDetails = await UserGroup.findAll({
+            where: { groupId },
+            attributes: ["userId"],
+        });
+        for (let i = 0; i < userDetails.length; i++) {
+            const user = await User.findOne({
+                where: { id: userDetails[i].userId },
+                attributes: ["name", "id"],
+            });
+            userPresentinthisGroup.push({ name: user.name, id: user.id });
+        }
+        res.send(userPresentinthisGroup);
+    } catch (error) {
+        return res.json({ error: error.message });
+    }
+};
+
+// removing memebers from a group
+const removeMemberfromGroupController = async (req, res) => {
+    const { groupId, userId } = req.params;
+    // receiving the jwt token from the admin and checking if the token is valid or not which we will recieve from request cookies
+    const { jwt_token } = req.cookies;
+    try {
+        // checking if the user is sending the token while trying to access this route or not
+        if (!jwt_token) {
+            return res.json({ error: "Access Denied" });
+        }
+        // but if the user is sending the token while trying to access this route
+        // verifying the token using jwt library
+        const decoded = jwt.verify(jwt_token, process.env.JWT_SECRET);
+        if (!decoded) return res.json({ error: "Invalid token" });
+        // but if decoded then need to find that user and need to delete him/her from that group
+        const userGroupDetails = await UserGroup.findOne({
+            where: { userId, groupId },
+        });
+        await userGroupDetails.destroy();
+        res.send({ message: "memeber removed from the group successfully" });
+    } catch (error) {
+        return res.json({ error: error.message });
+    }
+};
+
 module.exports = {
     createGroupController,
     fetchGroupController,
     addMemberstoGroupController,
     getCompleteGroupDetailsController,
+    findMemebrsforRemovingController,
+    removeMemberfromGroupController,
 };
