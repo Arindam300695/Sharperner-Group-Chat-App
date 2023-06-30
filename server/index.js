@@ -10,6 +10,28 @@ const Group = require("./models/groupModel");
 const Message = require("./models/messageModel");
 const groupRouter = require("./routes/groupRouter");
 const messageRouter = require("./routes/messageRouter");
+const socketIO = require("socket.io");
+const app = express();
+
+const io = socketIO(8000, {
+    cors: {
+        origin: "http://localhost:5173",
+    },
+});
+
+io.on("connection", (socket) => {
+    console.log(`A user connected with ${socket.id}`);
+    socket.on("message", (data) => {
+        console.log("Received message:", data);
+
+        // Broadcast the received message to all connected clients
+        io.emit("message", data);
+    });
+
+    // socket.on("disconnect", () => {
+    //     console.log("A user disconnected");
+    // });
+});
 
 const startApp = async () => {
     try {
@@ -21,8 +43,6 @@ const startApp = async () => {
         console.error("Unable to synchronize the database:", error.message);
     }
 };
-
-const app = express();
 
 // injecting express middleware
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));

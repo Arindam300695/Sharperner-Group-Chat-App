@@ -45,7 +45,6 @@ const createMessageController = async (req, res) => {
     // checking if the token is valid or not which we will recieve from request cookies
     const { jwt_token } = req.cookies;
     const { message, groupId, userId } = req.body;
-    console.log(message, groupId, userId);
 
     // checking if the user is sending the token while trying to access this route or not
     if (!jwt_token) {
@@ -70,7 +69,7 @@ const createMessageController = async (req, res) => {
 // getting messages from the database
 const getMessageController = async (req, res) => {
     const { groupId } = req.params;
-    console.log(groupId);
+
     // checking if the token is valid or not which we will recieve from request cookies
     const { jwt_token } = req.cookies;
 
@@ -92,9 +91,16 @@ const getMessageController = async (req, res) => {
             const user = await User.findOne({
                 where: { id: messages[i].ChatUserId },
             });
-            users.push(user);
+            users.push({
+                id: messages[i].id,
+                message: messages[i].message,
+                createdAt: messages[i].createdAt,
+                ChatUserId: messages[i].ChatUserId,
+                userName: user.name,
+                userProfilePicture: user.profilePicture,
+            });
         }
-        return res.json({ messages, users });
+        return res.json(users);
     } catch (error) {
         return res.json({ error: error.message });
     }
