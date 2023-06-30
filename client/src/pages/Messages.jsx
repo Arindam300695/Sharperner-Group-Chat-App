@@ -110,11 +110,6 @@ const Messages = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    // fileChangeHandler function
-
-    // fileUploadHandler function
-    const fileUploadHandler = async () => {};
-
     return (
         <div className="bg-[#2B2A4C] h-screen text-white flex justify-center items-center flex-col">
             <div className="container border border-white h-[90%] max-w-3xl m-auto shadow-sm rounded-md shadow-[#9336B4] overflow-hidden overflow-y-scroll p-4">
